@@ -11,21 +11,14 @@ package jp.xet.sample.brainfuck
 class Environment(val program: String) extends Iterator[Command] {
   // from scala.collection.Iterator
   def hasNext: Boolean = isEof != true
-  def next():Command = {
-    if( isEof ){
+  def next():Command =
+    if( isEof ) {
       throw new java.util.NoSuchElementException("no more program charctors.")
+    }else {
+      val cmd = command
+      progress
+      cmd
     }
-    else {
-      command match {
-        case Some(cmd) =>
-          progress
-          cmd
-        case None =>
-          progress
-          new NoOp(this)
-      }
-    }
-  }
 
   val memory = new Array[Int](3000)
   var pointer = 0
@@ -41,7 +34,7 @@ class Environment(val program: String) extends Iterator[Command] {
     ']' -> {(env:Environment) => new CloseLoop(env)}
   )
 
-  def command:Option[Command] = commands.get(programChar).map{ f => f(this) }
+  def command:Command = commands.get(programChar).map{ f => f(this) }.getOrElse( new NoOp(this) )
 
   def isEof = counter >= program.length
   def programChar = program(counter)
