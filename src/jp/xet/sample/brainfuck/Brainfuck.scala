@@ -12,9 +12,10 @@ object Brainfuck {
 
   def main(args:Array[String]) {
     val program = readSource
-    for(cmd <- new Environment(program)){
-      cmd.execute
-    }
+    (new Environment(program)).filter{ _ match {
+      case NoOp(_) => false
+      case c => true
+    } }.foreach{ _.execute }
   }
 
   def readSource = {
