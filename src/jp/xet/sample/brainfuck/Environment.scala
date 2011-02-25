@@ -13,19 +13,21 @@ class Environment(val program: String) {
   var pointer = 0
   var counter = 0
 
-  def isEof = {
-    counter >= program.length
-  }
+  val commands:Map[Char, Environment => Command] = Map(
+    '>' -> {(env:Environment) => new IncrementPointer(env)},
+    '<' -> {(env:Environment) => new DecrementPointer(env)},
+    '+' -> {(env:Environment) => new IncrementMemoryAtPointer(env)},
+    '-' -> {(env:Environment) => new DecrementMemoryAtPointer(env)},
+    '.' -> {(env:Environment) => new OutputMemoryAtPointer(env)},
+    '[' -> {(env:Environment) => new OpenLoop(env)},
+    ']' -> {(env:Environment) => new CloseLoop(env)}
+  )
 
-  def programChar = {
-    program(counter)
-  }
+  def command:Option[Command] = commands.get(programChar).map{ f => f(this) }
 
-  def progress:Unit = {
-    counter += 1
-  }
+  def isEof = counter >= program.length
+  def programChar = program(counter)
+  def progress:Unit = counter += 1
+  def memoryAtPointer = memory(pointer)
 
-  def memoryAtPointer = {
-    memory(pointer)
-  }
 }
