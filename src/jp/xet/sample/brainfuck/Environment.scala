@@ -8,7 +8,25 @@ package jp.xet.sample.brainfuck
  * To change this template use File | Settings | File Templates.
  */
 
-class Environment(val program: String) {
+class Environment(val program: String) extends Iterator[Command] {
+  // from scala.collection.Iterator
+  def hasNext: Boolean = isEof != true
+  def next():Command = {
+    if( isEof ){
+      throw new java.util.NoSuchElementException("no more program charctors.")
+    }
+    else {
+      command match {
+        case Some(cmd) =>
+          progress
+          cmd
+        case None =>
+          progress
+          new NoOp(this)
+      }
+    }
+  }
+
   val memory = new Array[Int](3000)
   var pointer = 0
   var counter = 0

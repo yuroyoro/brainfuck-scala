@@ -13,6 +13,10 @@ sealed abstract class Command {
   def execute:Unit
 }
 
+case class NoOp(env:Environment) extends Command {
+  def execute = {}
+}
+
 case class InputMemoryAtPointer(env: Environment) extends Command {
   def execute = env.memory(env.pointer) = Console.in.read
 }

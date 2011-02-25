@@ -12,10 +12,8 @@ object Brainfuck {
 
   def main(args:Array[String]) {
     val program = readSource
-    val env = new Environment(program)
-    while (env.isEof == false) {
-      env.command.foreach{ cmd => cmd.execute }
-      env.progress
+    for(cmd <- new Environment(program)){
+      cmd.execute
     }
   }
 
